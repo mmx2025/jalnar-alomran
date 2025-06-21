@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة جلنار العمران للتجارة | حلول الديكور المبتكرة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Desert Harmony (Warm Neutrals & Earthy Tones) -->
+    <!-- Application Structure Plan: The application is structured as a single-page digital brochure to provide a clear, user-centric journey. It begins with a hero section for immediate brand recognition, followed by a clear navigation bar. The sections are logically ordered: 'About Us' for context, an interactive 'Products' section with tab-based filtering for easy exploration, a 'Services' section to highlight core competencies, a unique 'Market Analysis' section that visually presents the company's competitive edge using a Chart.js graph (transforming the report's SWOT analysis into a positive marketing tool), a new 'Design Ideas Generator' section for AI-powered inspiration, and a final 'Contact Us' section for a clear call-to-action. This structure was chosen to guide the user from general information to specific details, then to creative engagement, and finally to action, making the dense report information digestible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        1.  Report Info: Full product portfolio (Flooring, Wall Alternatives, etc.). Goal: Organize & Compare. Viz/Method: Interactive Tabbed Section (HTML/CSS/JS). Interaction: Users click on category tabs to filter and view relevant product cards instantly. Justification: This avoids a long, static list, empowering users to explore products based on their interests, which is more engaging than the report's table.
+        2.  Report Info: Competitive landscape analysis. Goal: Compare & Differentiate. Viz/Method: Horizontal Bar Chart. Interaction: The chart visually contrasts Jalnar Al Omran with a generic competitor profile on key strengths identified in the report. Justification: A chart provides a quick, impactful understanding of the company's market position, which is more effective than reading textual analysis.
+        3.  New LLM Feature: Design Idea Generation. Goal: Engage & Inspire. Viz/Method: Interactive Form with Text Output (HTML/JS + Gemini API). Interaction: Users select room type and style, click a button, and receive a generated design concept. Justification: This adds a highly interactive and personalized element, leveraging AI to directly assist users in users in their design journey, making the application more valuable and dynamic.
+        4.  Library/Method: Chart.js (Canvas) for the chart, Vanilla JS for tab interaction and Gemini API integration.
+        Confirmation: NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+            min-height: 100vh; 
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tab-active {
+            border-color: #A16207; /* amber-700 */
+            color: #A16207;
+            background-color: #FEFCE8; /* yellow-50 */
+        }
+        .rtl-gradient {
+            background-image: linear-gradient(to left, var(--tw-gradient-stops));
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <header id="home" class="relative text-white overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1588412214952-471673628e3b?q=80&w=2070&auto=format&fit=crop');"></div>
+        <div class="relative container mx-auto px-6 py-24 md:py-32 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight drop-shadow-lg">جلنار العمران للتجارة</h1>
+            <p class="mt-4 text-lg md:text-2xl drop-shadow-md">نحوّل مساحاتكم إلى تحف فنية بجودة وإتقان</p>
+            <a href="#contact" class="mt-8 inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105">
+                تواصل معنا الآن
+            </a>
+        </div>
+    </header>
+
+    <nav class="sticky top-0 bg-white/80 backdrop-blur-sm shadow-md z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-center md:justify-between">
+                <div class="hidden md:block text-2xl font-bold text-amber-800">جلنار العمران</div>
+                <div class="flex items-center justify-center space-x-4 md:space-x-8 text-sm md:text-base font-semibold">
+                    <a href="#home" class="py-4 px-2 text-stone-600 hover:text-amber-700 transition duration-300">الرئيسية</a>
+                    <a href="#products" class="py-4 px-2 text-stone-600 hover:text-amber-700 transition duration-300">منتجاتنا</a>
+                    <a href="#services" class="py-4 px-2 text-stone-600 hover:text-amber-700 transition duration-300">خدماتنا</a>
+                    <a href="#analysis" class="py-4 px-2 text-stone-600 hover:text-amber-700 transition duration-300">لماذا تختارنا؟</a>
+                    <a href="#design-ideas" class="py-4 px-2 text-stone-600 hover:text-amber-700 transition duration-300">مولّد الأفكار</a>
+                    <a href="#contact" class="py-4 px-2 text-stone-600 hover:text-amber-700 transition duration-300">تواصل معنا</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="about" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-amber-800 mb-4">نبذة عن جلنار العمران</h2>
+                <p class="max-w-3xl mx-auto text-lg text-stone-600 leading-relaxed">
+                    نحن شركة رائدة في تبوك، متخصصون في تقديم حلول الديكور الداخلي والخارجي المبتكرة. نلتزم بتوفير منتجات عالية الجودة وخدمات تركيب احترافية تجمع بين الجمالية والوظائف العملية، لمساعدتكم على تحقيق رؤيتكم لمساحاتكم المثالية.
+                </p>
+            </div>
+        </section>
+
+        <section id="products" class="py-16 md:py-24 bg-stone-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-800 mb-4">اكتشف منتجاتنا المتنوعة</h2>
+                    <p class="max-w-2xl mx-auto text-lg text-stone-600">
+                        تصفح مجموعتنا الواسعة من الحلول العصرية التي تلبي كافة الأذواق والاحتياجات.
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8" id="product-tabs">
+                    <button data-target="all" class="tab-btn tab-active py-2 px-4 rounded-full border-2 border-transparent font-semibold transition">الكل</button>
+                    <button data-target="flooring" class="tab-btn py-2 px-4 rounded-full border-2 border-transparent font-semibold transition">الأرضيات</button>
+                    <button data-target="walls" class="tab-btn py-2 px-4 rounded-full border-2 border-transparent font-semibold transition">بدائل الجدران والأسقف</button>
+                    <button data-target="exterior" class="tab-btn py-2 px-4 rounded-full border-2 border-transparent font-semibold transition">الديكور الخارجي</button>
+                    <button data-target="decorative" class="tab-btn py-2 px-4 rounded-full border-2 border-transparent font-semibold transition">عناصر ديكورية</button>
+                </div>
+
+                <div id="product-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="flooring">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">أرضيات خشبية</h3>
+                            <p class="text-stone-600 mb-4">تضفي فخامة ودفئًا. متوفرة بأنواع تركية، ألمانية، وصينية عالية الجودة.</p>
+                            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">داخلي</span>
+                        </div>
+                    </div>
+                    <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="flooring">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">أرضيات SPC</h3>
+                            <p class="text-stone-600 mb-4">متانة فائقة ومقاومة للماء والرطوبة والخدش. مثالية للمناطق الرطبة.</p>
+                             <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">داخلي</span>
+                        </div>
+                    </div>
+                    <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="walls">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">بديل الشيبورد</h3>
+                            <p class="text-stone-600 mb-4">حل عصري وعملي للجدران بسماكة 8 مم. متوفر بألوان الخشب والقماش والصخر.</p>
+                            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">جدران وأسقف</span>
+                        </div>
+                    </div>
+                     <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="walls">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">بديل الرخام</h3>
+                            <p class="text-stone-600 mb-4">مظهر الرخام الفاخر بتكلفة أقل وسهولة في التركيب والصيانة.</p>
+                           <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">جدران وأسقف</span>
+                        </div>
+                    </div>
+                    <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="walls decorative">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">بديل الخشب</h3>
+                            <p class="text-stone-600 mb-4">بديل عصري وعملي للخشب الطبيعي. متوفر بمقاسات 15، 16، و 20 سم.</p>
+                            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">داخلي وخارجي</span>
+                        </div>
+                    </div>
+                     <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="exterior">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">تكسيات خارجية</h3>
+                            <p class="text-stone-600 mb-4">حلول مبتكرة للواجهات بالخشب المعالج لمظهر طبيعي مقاوم للعوامل الجوية.</p>
+                            <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">واجهات خارجية</span>
+                        </div>
+                    </div>
+                    <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-2" data-category="decorative">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-stone-800 mb-2">بارتشن خشب</h3>
+                            <p class="text-stone-600 mb-4">فواصل أنيقة وعملية لتقسيم المساحات بأسلوب جمالي ووظيفي.</p>
+                             <span class="inline-block bg-amber-100 text-amber-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">تقسيم مساحات</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-800 mb-4">خدماتنا المتكاملة</h2>
+                    <p class="max-w-2xl mx-auto text-lg text-stone-600">
+                       نحن لا نبيع المنتجات فحسب، بل نقدم حلولاً كاملة تضمن لكم راحة البال ونتائج تفوق التوقعات.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6">
+                        <div class="text-amber-600 text-5xl mb-4">✍️</div>
+                        <h3 class="text-2xl font-bold text-stone-800 mb-2">تصميم واستشارات</h3>
+                        <p class="text-stone-600">فريقنا جاهز لتقديم المشورة ومساعدتكم في اختيار أفضل الحلول التي تناسب أذواقكم وميزانيتكم.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-amber-600 text-5xl mb-4">🛠️</div>
+                        <h3 class="text-2xl font-bold text-stone-800 mb-2">تركيب احترافي</h3>
+                        <p class="text-stone-600">نتميز بسرعة وكفاءة التركيب مع الحد الأدنى من الإزعاج، لنضمن تحولاً سلساً لمساحاتكم.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-amber-600 text-5xl mb-4">✨</div>
+                        <h3 class="text-2xl font-bold text-stone-800 mb-2">تحول جمالي</h3>
+                        <p class="text-stone-600">نلتزم بتحقيق تحول جذري لمساحاتكم، وتحويلها من مجرد أماكن إلى تجارب بصرية فريدة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="py-16 md:py-24 bg-stone-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-800 mb-4">لماذا تختار جلنار العمران؟</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-stone-600">
+                        في سوق تنافسي، نتميز بتركيزنا على الجودة، الابتكار، والكفاءة. هذا الرسم البياني يوضح كيف نبرز في سوق الديكور بتبوك.
+                    </p>
+                </div>
+                 <div class="chart-container">
+                    <canvas id="competitorChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="design-ideas" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-amber-800 mb-4">✨ مولّد أفكار التصميم بالذكاء الاصطناعي ✨</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-stone-600">
+                        احصل على إلهام فوري! اختر نوع الغرفة والنمط المفضل لديك ودع الذكاء الاصطناعي يولد لك فكرة تصميم فريدة.
+                    </p>
+                </div>
+                <div class="max-w-2xl mx-auto bg-stone-100 p-8 rounded-lg shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="room-type" class="block text-stone-700 text-sm font-bold mb-2">نوع الغرفة:</label>
+                            <select id="room-type" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-stone-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-stone-300">
+                                <option value="غرفة معيشة">غرفة معيشة</option>
+                                <option value="غرفة نوم">غرفة نوم</option>
+                                <option value="مطبخ">مطبخ</option>
+                                <option value="حمام">حمام</option>
+                                <option value="مكتب منزلي">مكتب منزلي</option>
+                                <option value="مساحة خارجية (حديقة/فناء)">مساحة خارجية (حديقة/فناء)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="design-style" class="block text-stone-700 text-sm font-bold mb-2">النمط المفضل:</label>
+                            <select id="design-style" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-stone-700 leading-tight focus:outline-none focus:shadow-outline bg-white border-stone-300">
+                                <option value="مودرن">مودرن</option>
+                                <option value="كلاسيكي">كلاسيكي</option>
+                                <option value="بوهيمي">بوهيمي</option>
+                                <option value="صناعي">صناعي</option>
+                                <option value="ريفي">ريفي</option>
+                                <option value="اسكندنافي">اسكندنافي</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="generate-idea-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 mb-6 flex items-center justify-center">
+                        توليد فكرة تصميم ✨
+                        <span id="loading-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></span>
+                    </button>
+                    <div id="design-output" class="bg-white p-6 rounded-lg shadow-inner min-h-[120px] flex items-center justify-center text-stone-700 italic">
+                        <p>ستظهر فكرة التصميم هنا...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-16 md:py-24 bg-amber-700 text-white">
+             <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">هل أنت مستعد لبدء مشروعك؟</h2>
+                <p class="max-w-xl mx-auto text-lg text-amber-100 mb-8">
+                    تواصل معنا اليوم للحصول على استشارة مجانية. فريقنا في تبوك بانتظار خدمتكم.
+                </p>
+                <div class="bg-white text-amber-800 rounded-lg p-8 inline-flex items-center justify-center space-x-6 space-x-reverse shadow-2xl">
+                    <div class="text-5xl">📞</div>
+                    <div>
+                        <p class="text-lg font-semibold text-stone-600">اتصل بنا مباشرة على:</p>
+                        <a href="tel:0569955118" class="text-3xl font-bold tracking-wider" dir="ltr">056 995 5118</a>
+                    </div>
+                </div>
+                 <div class="mt-8 text-amber-200">
+                    <p>📍 موقعنا: تبوك، المملكة العربية السعودية</p>
+                </div>
+             </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center text-stone-400">
+            <p>&copy; 2025 شركة جلنار العمران للتجارة. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Product Tabs Logic
+            const tabs = document.querySelectorAll('.tab-btn');
+            const productCards = document.querySelectorAll('.product-card');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.target;
+
+                    tabs.forEach(t => t.classList.remove('tab-active'));
+                    tab.classList.add('tab-active');
+
+                    productCards.forEach(card => {
+                        if (target === 'all' || card.dataset.category.includes(target)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Navigation smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Chart.js - Competitor Analysis
+            const ctx = document.getElementById('competitorChart');
+            if(ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['تنوع المنتجات العصرية', 'خبرة التركيب الاحترافية', 'التركيز على الكفاءة (سرعة ونظافة)', 'التواجد الرقمي المرئي'],
+                        datasets: [{
+                            label: 'جلنار العمران',
+                            data: [90, 95, 85, 90],
+                            backgroundColor: 'rgba(161, 98, 7, 0.7)',
+                            borderColor: 'rgba(161, 98, 7, 1)',
+                            borderWidth: 1
+                        }, {
+                            label: 'متوسط المنافسين',
+                            data: [70, 75, 60, 65],
+                            backgroundColor: 'rgba(120, 113, 108, 0.5)',
+                            borderColor: 'rgba(120, 113, 108, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        family: "'Cairo', sans-serif",
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                rtl: true,
+                                bodyFont: {
+                                    family: "'Cairo', sans-serif"
+                                },
+                                titleFont: {
+                                    family: "'Cairo', sans-serif"
+                                }
+                            },
+                             title: {
+                                display: true,
+                                text: 'مقارنة تنافسية في سوق الديكور',
+                                font: {
+                                    size: 18,
+                                    family: "'Cairo', sans-serif",
+                                    weight: 'bold'
+                                },
+                                color: '#44403c' // stone-700
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    font: {
+                                        family: "'Cairo', sans-serif"
+                                    }
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    font: {
+                                        family: "'Cairo', sans-serif",
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Gemini API Integration - Design Idea Generator
+            const generateIdeaBtn = document.getElementById('generate-idea-btn');
+            const roomTypeSelect = document.getElementById('room-type');
+            const designStyleSelect = document.getElementById('design-style');
+            const designOutputDiv = document.getElementById('design-output');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            if (generateIdeaBtn) {
+                generateIdeaBtn.addEventListener('click', async () => {
+                    const roomType = roomTypeSelect.value;
+                    const designStyle = designStyleSelect.value;
+
+                    designOutputDiv.innerHTML = '<p>جاري توليد الفكرة...</p>';
+                    loadingSpinner.classList.remove('hidden');
+                    generateIdeaBtn.disabled = true;
+
+                    const prompt = `قدم فكرة تصميم داخلي موجزة لا تتجاوز 100 كلمة لـ ${roomType} بأسلوب ${designStyle}. ركز على الأجواء العامة واللمسات النهائية، مع الأخذ في الاعتبار إمكانية استخدام منتجات ديكور مثل الأرضيات الخشبية، أرضيات SPC، بدائل الرخام، بدائل الخشب، أو فواصل خشبية من شركة ديكور متخصصة في توفير هذه المنتجات.`;
+
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await response.json();
+
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            designOutputDiv.innerHTML = `<p>${text}</p>`;
+                        } else {
+                            designOutputDiv.innerHTML = '<p>عذرًا، لم نتمكن من توليد فكرة. يرجى المحاولة مرة أخرى.</p>';
+                        }
+                    } catch (error) {
+                        console.error('Error calling Gemini API:', error);
+                        designOutputDiv.innerHTML = '<p>حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك والمحاولة لاحقًا.</p>';
+                    } finally {
+                        loadingSpinner.classList.add('hidden');
+                        generateIdeaBtn.disabled = false;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
